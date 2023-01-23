@@ -27,7 +27,7 @@ class Program
         // Create a string variable and get user input from the keyboard and store it in the variable
         string cabinetPath = Console.ReadLine();
         if (string.IsNullOrWhiteSpace(cabinetPath))
-            cabinetPath="C:\\Users\\TOSHIBA\\Downloads\\MediaGet Downloads";
+            cabinetPath= "D:\\NG-FHU61Q86";
         if (!Directory.Exists(cabinetPath))
         {
             Console.Error.WriteLine("Cabinet path is invalid. please give valid path");
@@ -41,7 +41,7 @@ class Program
         // Create a string variable and get user input from the keyboard and store it in the variable
         string workspaceName = Console.ReadLine();
         if (string.IsNullOrWhiteSpace(workspaceName))
-            workspaceName="UI and UX App Design in Adobe XD,Spotify Clone";
+            workspaceName= "8888888 8888888";
         var workpsacesList = workspaceName.Split(@",").ToList();
         foreach (string item in workpsacesList)
         {
