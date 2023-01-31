@@ -49,6 +49,7 @@ namespace ConsoleApp1
                 DirectoryInfo currentDirectoryInfo = new DirectoryInfo(item);
                 string cabinetType = currentDirectoryInfo.Name.Trim();
                 string workspaceId = "";
+                string key = RandomString();
 
                 if (workspacesName.Any(o => o == currentDirectoryInfo.Name))
                 {
@@ -63,7 +64,6 @@ namespace ConsoleApp1
                         attributeList.Add(new Attributes { Id = 1, value = client, description = client });
                         attributeList.Add(new Attributes { Id = 2, value = matter, description = matter });
                     }
-                    string key = RandomString();
                     accessUrl.Add(ReplaceWhitespace($"/v1/Workspace/{cabinetId}/{client}/{matter}/info", ""), "/"+ key + "Info");
                     workspaceId =$"{cabinetId}/{client}/{matter}";
                     isWorkspace = true;
@@ -89,12 +89,6 @@ namespace ConsoleApp1
                 }
                 else
                 {
-                    //"//v1/Cabinet/NG-FHU61Q86/folders?$select=standardAttributes&format=json": "/cabinetFolders",
-                    string key = RandomString();
-
-                    //string key = ReplaceWhitespace($"{(cabinetType)}{Path.GetFileNameWithoutExtension(item)}", "");
-                    //string key = ReplaceWhitespace($"{(currentDirectoryName + Path.GetFileName(directory))} {guid}", "");
-
                     FolderContent standard = new FolderContent
                     {
                         id = key,
@@ -115,7 +109,7 @@ namespace ConsoleApp1
                     accessUrl.Add(ReplaceWhitespace("/v1/Folder/" + key + "/info", ""), @"/" + ReplaceSpecialCharacter(key + "Info"));
                     isCabinetFolder = true;
                 }
-                ReadFolderStructure(currentDirectoryInfo.FullName, cabinetId, workspacesName,workspaceId, isWorkspace, isCabinetFolder);
+                ReadFolderStructure(key,currentDirectoryInfo.FullName, cabinetId, workspacesName,workspaceId, isWorkspace, isCabinetFolder);
             }
             if (cabinetFolderInfo.Any())
             {
@@ -159,7 +153,7 @@ namespace ConsoleApp1
         //    }
         //    return sb.ToString();
         //}
-        public void ReadFolderStructure(string Location, string cabinetId, List<string> workspacesName, string workspaceId, bool isWorkspace = false,bool isCabinetFolder=false)
+        public void ReadFolderStructure(string ParentKey, string Location, string cabinetId, List<string> workspacesName, string workspaceId, bool isWorkspace = false,bool isCabinetFolder=false)
         {
             //string guid = GetIdentity(Location);
             //Guid guid = Guid.NewGuid();
@@ -257,32 +251,24 @@ namespace ConsoleApp1
                           standardAttributes = standard
 
                       };                  
-                    ReadFolderStructure(directory, cabinetId, new List<string>(), workspaceId);
+                    ReadFolderStructure(key, directory, cabinetId, new List<string>(), workspaceId);
 
+                    
                 }
 
-            }
-            //accessUrl[standardListkey+"/?standardList"] = new
-            //{
-            //     standardListkey =standardListkey
-
-            //};
+            }            
             Folders folders = new Folders();
             folders.standardList = folderContents;
             if (!isWorkspace)
             {
-                string key = RandomString();
-
-                accessUrl.Add(ReplaceWhitespace("/v1/Folder" + key + "$?$select=standardAttributes&format=json", ""), @"/" + key);
-                jsonData[key] = folders;
+                accessUrl.Add(ReplaceWhitespace("/v1/Folder/" + ParentKey + "?$select=standardAttributes&format=json", ""), @"/" + ParentKey);
+                jsonData[ParentKey] = folders;
 
             }
             else
             {
-                string key = RandomString();
-
-                accessUrl.Add(ReplaceWhitespace("/v1/Workspace/" + workspaceId + "?$select=standardAttributes", ""), @"/" + key);
-                jsonData[key] = folders;
+                accessUrl.Add(ReplaceWhitespace("/v1/Workspace/" + workspaceId + "?$select=standardAttributes", ""), @"/" + ParentKey);
+                jsonData[ParentKey] = folders;
             }
 
         }
